@@ -94,7 +94,7 @@ const HomeHeader = (props) => {
       }}>
       <Image 
       source={{uri: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg' }}
-      style={{width: 30, height: 30, borderRadius: 30,}}
+      style={{width: 30, height: 30, borderRadius: 30}}
       />
       <Text style={{flex: 1, textAlign: 'center', marginLeft:50, fontSize: 18, fontWeight: 'bold'}}> Sinapse Chat </Text>
       <Feather name="camera" size={24} color="grey" style={{ marginHorizontal: 10}} />

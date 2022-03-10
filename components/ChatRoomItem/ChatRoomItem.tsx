@@ -1,4 +1,5 @@
 import { Text, View, Image, StyleSheet, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import styles from './styles'
 import React from "react";
 
@@ -6,9 +7,10 @@ import React from "react";
 export default function ({chatRoom}) {
     const user = chatRoom.users[1]
 
+	const navigation = useNavigation()
 
 	const onPress = () => {
-		console.warn('pressed')
+		navigation.navigate('ChatRoom', {id: chatRoom.id})
 	}
 
 	return (

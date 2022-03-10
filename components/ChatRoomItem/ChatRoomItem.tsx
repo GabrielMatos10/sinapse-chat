@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet } from "react-native";
+import { Text, View, Image, StyleSheet, Pressable } from "react-native";
 import styles from './styles'
 import React from "react";
 
@@ -6,8 +6,13 @@ import React from "react";
 export default function ({chatRoom}) {
     const user = chatRoom.users[1]
 
+
+	const onPress = () => {
+		console.warn('pressed')
+	}
+
 	return (
-		<View style={styles.container}>
+		<Pressable onPress={onPress} style={styles.container}>
 			<Image
 				style={styles.image}
 				source={{
@@ -28,7 +33,7 @@ export default function ({chatRoom}) {
 					{chatRoom.lastMessage.content}
 				</Text>
 			</View>
-		</View>
+		</Pressable>
 	);
 }
 

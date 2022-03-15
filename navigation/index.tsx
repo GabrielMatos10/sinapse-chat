@@ -9,6 +9,7 @@ import {
 	NavigationContainer,
 	DefaultTheme,
 	DarkTheme,
+	useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
@@ -22,6 +23,7 @@ import TabTwoScreen from "../screens/TabTwoScreen";
 
 import ChatRoomScreen from "../screens/ChatRoomScreen";
 import HomeScreen from "../screens/HomeScreen";
+import UsersScreen from "../screens/UsersScreen";
 
 import { 
   Feather, 
@@ -71,6 +73,12 @@ function RootNavigator() {
 
 			/>
 			<Stack.Screen
+				name="UsersScreen"
+				component={UsersScreen}
+        options={{ title: "Contatos", headerBackTitleVisible: false }}
+
+			/>
+			<Stack.Screen
 				name="NotFound"
 				component={NotFoundScreen}
 				options={{ title: "Oops!" }}
@@ -80,8 +88,8 @@ function RootNavigator() {
 }
 
 const HomeHeader = (props) => {
-
   const {width} = useWindowDimensions()
+  const navigation = useNavigation()
 
   return(
     <View style={{
@@ -98,7 +106,9 @@ const HomeHeader = (props) => {
       />
       <Text style={{flex: 1, textAlign: 'center', marginLeft:50, fontSize: 18, fontWeight: 'bold'}}> Sinapse Chat </Text>
       <Feather name="camera" size={24} color="grey" style={{ marginHorizontal: 10}} />
+	  <Pressable onPress={() => navigation.navigate('UsersScreen')}>
       <Feather name="edit" size={24} color="grey" style={{ marginHorizontal: 10}} />
+	  </Pressable>
     </View>
   )
 }

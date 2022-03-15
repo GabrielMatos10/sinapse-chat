@@ -1,11 +1,12 @@
 import React from 'react'
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, FlatList, SafeAreaView, Pressable } from 'react-native'
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 import chatRoomData from '../assets/dummy-data/Chats'
 
 export default function ChatRoomScreen() {
+
   const route = useRoute()
   const navigation = useNavigation()
 
@@ -20,9 +21,10 @@ export default function ChatRoomScreen() {
         renderItem={({item}) => <Message message={item}/>}
         inverted
       />
+
       <MessageInput/>
     </SafeAreaView>
-  )
+  ) 
 }
 
 

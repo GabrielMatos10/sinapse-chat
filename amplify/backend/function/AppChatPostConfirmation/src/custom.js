@@ -18,7 +18,7 @@ exports.handler = async (event, context) => {
   const userItem = {
     __typename: { S: 'User'},
     _lastChangedAt: { N: timestamp.toString() },
-    _version:  { N: version.toString()},
+    _version:  { N: "1"},
     createdAt: { S: now.toISOString()},
     updatedAt: { S: now.toISOString()},
     id: { S: event.request.userAttributes.sub},

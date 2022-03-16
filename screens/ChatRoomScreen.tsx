@@ -10,7 +10,7 @@ export default function ChatRoomScreen() {
   const route = useRoute()
   const navigation = useNavigation()
 
-  console.warn("Displaying chato room : ", route.params?.id)
+  console.warn("Displaying chat room : ", route.params?.id)
 
   navigation.setOptions({title: 'ElonMusk'})
 
@@ -21,7 +21,6 @@ export default function ChatRoomScreen() {
         renderItem={({item}) => <Message message={item}/>}
         inverted
       />
-
       <MessageInput/>
     </SafeAreaView>
   ) 

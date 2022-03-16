@@ -19,7 +19,7 @@
       "function": {
         "AppChatPostConfirmation": {
           "deploymentBucketName": "amplify-appchat-staging-183946-deployment",
-          "s3Key": "amplify-builds/AppChatPostConfirmation-39306974417072545758-build.zip"
+          "s3Key": "amplify-builds/AppChatPostConfirmation-2b6467307a72586f4837-build.zip"
         }
       }
     }

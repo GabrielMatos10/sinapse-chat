@@ -1,15 +1,35 @@
 import React from "react";
-import { Text, View, Image, StyleSheet, Pressable } from "react-native";
+import { Text, View, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import styles from './styles'
-
+import { ChatRoom, ChatRoomUser, User } from "../../src/models";
+import  { Auth, DataStore } from 'aws-amplify';
 
 export default function UserItem ({user}) {
 
 	const navigation = useNavigation()
 
-	const onPress = () => {
+	const onPress = async () => {
 		// Create a chat room
+		const newChatRoom = await DataStore.save(new ChatRoom({newMessages: 0}))
+
+		// Connect auth user with the chat room
+		const authUser = await Auth.currentAuthenticatedUser()
+		console.log(authUser.attributes.sub)
+		const dbUser = await DataStore.query(User, authUser.attributes.sub)
+		console.log(dbUser)
+		  await DataStore.save(new ChatRoomUser({
+		  	user: dbUser,
+		  	chatRoom: newChatRoom,
+		  }))
+
+		// connect clicked user with the chat room
+		   await DataStore.save(new ChatRoomUser({
+		   	user,
+			chatRoom: newChatRoom
+		   }))
+
+		  navigation.navigate('ChatRoom', {id: newChatRoom.id})
 	}
 
 	return (

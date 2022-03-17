@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Text,
 	View,
@@ -7,26 +7,38 @@ import {
 	FlatList,
 	Pressable,
 } from "react-native";
-import { Auth } from "aws-amplify";
-import ChatRoomItem from "../components/ChatRoomItem/ChatRoomItem";
-
-import chatRoomsData from "../assets/dummy-data/ChatRooms";
-
-const chatroom1 = chatRoomsData[0];
-const chatroom2 = chatRoomsData[1];
+import { Auth, DataStore } from "aws-amplify";
+import { ChatRoom, ChatRoomUser } from "../src/models";
+import ChatRoomItem from "../components/ChatRoomItem";
 
 export default function TabOneScreen() {
+	const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+
+	useEffect(() => {
+		const fetchChatRooms = async () => {
+		  const userData = await Auth.currentAuthenticatedUser();
+
+		   const chatRooms = (await DataStore.query(ChatRoomUser))
+			    .filter(
+			     (chatRoomUser) => chatRoomUser.user.id === userData.attributes.sub
+			    )
+			  .map((chatRoomUser) => chatRoomUser.chatRoom);
+		    setChatRooms(chatRooms);
+		};
+		fetchChatRooms();
+	  }, []);
+
 	const logOut = () => {
 		Auth.signOut();
 	};
 
 	return (
 		<View style={styles.page}>
-			<FlatList
-				data={chatRoomsData}
-				renderItem={({ item }) => <ChatRoomItem chatRoom={item} />}
-				showsVerticalScrollIndicator={false}
-			/>
+         <FlatList
+        data={chatRooms}
+        renderItem={({ item }) => <ChatRoomItem chatRoom={item} />}
+        showsVerticalScrollIndicator={false}
+      />   
 			{/* <Pressable
 				onPress={logOut}
 				style={{ backgroundColor: "red", height: 50, margin: 10,borderRadius: 50, alignItems:'center', justifyContent: 'center', }}

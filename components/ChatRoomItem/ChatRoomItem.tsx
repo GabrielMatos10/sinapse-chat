@@ -1,16 +1,23 @@
-import { Text, View, Image, StyleSheet, Pressable } from "react-native";
+import React, {useState, useEffect} from "react";
+import { Text, View, Image, StyleSheet, Pressable, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { DataStore } from "@aws-amplify/datastore";
+import { ChatRoomUser, User } from "../../src/models";
 import styles from './styles'
-import React from "react";
 
 
-export default function ({chatRoom}) {
-    const user = chatRoom.users[1]
+export default function ({ chatRoom }) {
+	const [users, setUsers] = useState<User[]>([]) // all users in this chatroom
+	const [user, setUser] = useState<User | null>(null)
 
 	const navigation = useNavigation()
 
 	const onPress = () => {
 		navigation.navigate('ChatRoom', {id: chatRoom.id})
+	}
+
+	if (!user) {
+		return <ActivityIndicator/>
 	}
 
 	return (

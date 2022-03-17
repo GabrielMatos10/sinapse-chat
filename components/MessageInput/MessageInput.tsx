@@ -16,12 +16,34 @@ import {
     AntDesign, 
     Ionicons 
 } from '@expo/vector-icons'; 
+import { DataStore } from '@aws-amplify/datastore';
+import { Message } from '../../src/models';
+import { User } from '../../src/models';
+import { Auth } from 'aws-amplify';
+import { ChatRoom } from '../../src/models';
 
-export default function MessageInput() {
+export default function MessageInput({ chatRoom } ) {
     const [message, setMessage] = useState('')
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         // send message
+
+        const user = await Auth.currentAuthenticatedUser()
+        const newMessage = await DataStore.save(new Message({
+            content: message,
+            userID: user.attributes.sub ,
+            chatroomID: chatRoom.id ,
+        }))
+
+        updateLastMessage(newMessage)
+
+        setMessage('')
+    }
+
+    const updateLastMessage = async (newMessage) => {
+        DataStore.save(ChatRoom.copyOf(chatRoom, updatedChatRoom => {
+            updatedChatRoom.LastMessage = newMessage
+        }))
     }
 
     const onPlusClicked = () => {
@@ -29,7 +51,7 @@ export default function MessageInput() {
     }
 
     const onPress = () => {
-        if(!message) {
+        if(message) {
             sendMessage()
         } else {
             onPlusClicked()

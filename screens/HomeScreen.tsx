@@ -23,7 +23,7 @@ export default function TabOneScreen() {
 			     (chatRoomUser) => chatRoomUser.user.id === userData.attributes.sub
 			    )
 			  .map((chatRoomUser) => chatRoomUser.chatRoom);
-		    setChatRooms(chatRooms);
+		     setChatRooms(chatRooms);
 		};
 		fetchChatRooms();
 	  }, []);
@@ -34,11 +34,11 @@ export default function TabOneScreen() {
 
 	return (
 		<View style={styles.page}>
-         <FlatList
-        data={chatRooms}
-        renderItem={({ item }) => <ChatRoomItem chatRoom={item} />}
-        showsVerticalScrollIndicator={false}
-      />   
+        	 <FlatList
+				data={chatRooms}
+				renderItem={({ item }) => <ChatRoomItem chatRoom={item} />}
+				showsVerticalScrollIndicator={false}
+      		/>   
 			{/* <Pressable
 				onPress={logOut}
 				style={{ backgroundColor: "red", height: 50, margin: 10,borderRadius: 50, alignItems:'center', justifyContent: 'center', }}

@@ -13,7 +13,14 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { ColorSchemeName, Pressable, Text, View, Image, useWindowDimensions } from "react-native";
+import {
+	ColorSchemeName,
+	Pressable,
+	Text,
+	View,
+	Image,
+	useWindowDimensions,
+} from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -25,10 +32,9 @@ import ChatRoomScreen from "../screens/ChatRoomScreen";
 import HomeScreen from "../screens/HomeScreen";
 import UsersScreen from "../screens/UsersScreen";
 
-import { 
-  Feather, 
+import ChatRoomHeader from "./ChatRoomHeader";
 
-} from '@expo/vector-icons'
+import { Feather } from "@expo/vector-icons";
 
 import {
 	RootStackParamList,
@@ -43,10 +49,7 @@ export default function Navigation({
 	colorScheme: ColorSchemeName;
 }) {
 	return (
-		<NavigationContainer
-			linking={LinkingConfiguration}
-			theme={colorScheme === "dark" ? DefaultTheme : DarkTheme}
-		>
+		<NavigationContainer linking={LinkingConfiguration}>
 			<RootNavigator />
 		</NavigationContainer>
 	);
@@ -64,19 +67,20 @@ function RootNavigator() {
 			<Stack.Screen
 				name="Home"
 				component={HomeScreen}
-        options={{ headerTitle:  HomeHeader }}
+				options={{ headerTitle: HomeHeader }}
 			/>
 			<Stack.Screen
 				name="ChatRoom"
 				component={ChatRoomScreen}
-        options={{ headerTitle:  ChatRoomHeader, headerBackTitleVisible: false }}
-
+				options={({route}) => ({
+					headerTitle: () => <ChatRoomHeader id={route.params?.id} />,
+					headerBackTitleVisible: false,
+				})}
 			/>
 			<Stack.Screen
 				name="UsersScreen"
 				component={UsersScreen}
-        options={{ title: "Contatos", headerBackTitleVisible: false }}
-
+				options={{ title: "Contatos", headerBackTitleVisible: false }}
 			/>
 			<Stack.Screen
 				name="NotFound"
@@ -88,54 +92,54 @@ function RootNavigator() {
 }
 
 const HomeHeader = (props) => {
-  const {width} = useWindowDimensions()
-  const navigation = useNavigation()
+	const { width } = useWindowDimensions();
+	const navigation = useNavigation();
 
-  return(
-    <View style={{
-      flexDirection: 'row', 
-      justifyContent: 
-      'space-between', 
-      width,
-      padding: 10,
-      alignItems: 'center',
-      }}>
-      <Image 
-      source={{uri: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg' }}
-      style={{width: 30, height: 30, borderRadius: 30}}
-      />
-      <Text style={{flex: 1, textAlign: 'center', marginLeft:50, fontSize: 18, fontWeight: 'bold'}}> Sinapse Chat </Text>
-      <Feather name="camera" size={24} color="grey" style={{ marginHorizontal: 10}} />
-	  <Pressable onPress={() => navigation.navigate('UsersScreen')}>
-      <Feather name="edit" size={24} color="grey" style={{ marginHorizontal: 10}} />
-	  </Pressable>
-    </View>
-  )
-}
-const ChatRoomHeader = (props) => {
-
-  const {width} = useWindowDimensions()
-
-  return(
-    <View style={{
-      flexDirection: 'row', 
-      justifyContent: 
-      'space-between', 
-      width: width - 60,
-      padding: 10,
-      alignItems: 'center',
-      }}>
-      <Image 
-      source={{uri: 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg' }}
-      style={{width: 30, height: 30, borderRadius: 30,}}
-      />
-      <Text style={{flex: 1, marginLeft:5, fontSize: 18, fontWeight: 'bold'}}> {props.children} </Text>
-      <Feather name="camera" size={24} color="grey" style={{ marginHorizontal: 10}} />
-      <Feather name="edit" size={24} color="grey" style={{ marginHorizontal: 10}} />
-    </View>
-  )
-}
-
+	return (
+		<View
+			style={{
+				flexDirection: "row",
+				justifyContent: "space-between",
+				width,
+				padding: 10,
+				alignItems: "center",
+			}}
+		>
+			<Image
+				source={{
+					uri: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg",
+				}}
+				style={{ width: 30, height: 30, borderRadius: 30 }}
+			/>
+			<Text
+				style={{
+					flex: 1,
+					textAlign: "center",
+					marginLeft: 50,
+					fontSize: 18,
+					fontWeight: "bold",
+				}}
+			>
+				{" "}
+				Sinapse Chat{" "}
+			</Text>
+			<Feather
+				name="camera"
+				size={24}
+				color="grey"
+				style={{ marginHorizontal: 10 }}
+			/>
+			<Pressable onPress={() => navigation.navigate("UsersScreen")}>
+				<Feather
+					name="edit"
+					size={24}
+					color="grey"
+					style={{ marginHorizontal: 10 }}
+				/>
+			</Pressable>
+		</View>
+	);
+};
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.

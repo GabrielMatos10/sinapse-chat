@@ -23,13 +23,17 @@ import * as ImagePicker from "expo-image-picker";
 import EmojiSelector from "react-native-emoji-selector";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import { Audio } from "expo-av";
 
 export default function MessageInput({ chatRoom }) {
 	const [message, setMessage] = useState("");
 	const [isemojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 	const [image, setImage] = useState<string | null>(null);
-	const [ progress, setProgress] = useState(0)
-
+	const [progress, setProgress] = useState(0);
+	const [recording, setRecording] = useState<Audio.Recording | null>(null);
+	const [sound, setSound] = useState<Audio.Sound | null>(null);
+	const [paused, setPaused] = useState(true)
+	const [audioProgress, setAudioProgress] = useState(0)
 
 	useEffect(() => {
 		(async () => {
@@ -37,6 +41,8 @@ export default function MessageInput({ chatRoom }) {
 				const libraryResponse =
 					await ImagePicker.requestMediaLibraryPermissionsAsync();
 				const photoResponse = await ImagePicker.requestCameraPermissionsAsync();
+				await Audio.requestPermissionsAsync();
+
 				if (
 					libraryResponse.status !== "granted" ||
 					photoResponse.status !== "granted"
@@ -118,9 +124,9 @@ export default function MessageInput({ chatRoom }) {
 			setImage(result.uri);
 		}
 	};
-	
+
 	const progressCallback = (progress) => {
-		setProgress(progress.loaded/progress.total)
+		setProgress(progress.loaded / progress.total);
 	};
 
 	const sendImage = async () => {
@@ -157,6 +163,58 @@ export default function MessageInput({ chatRoom }) {
 		return blob;
 	};
 
+	// Audio Recording
+	async function startRecording() {
+		try {
+			await Audio.setAudioModeAsync({
+				allowsRecordingIOS: true,
+				playsInSilentModeIOS: true,
+			});
+			console.log("Starting recording..");
+			const { recording } = await Audio.Recording.createAsync(
+				Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+			);
+			setRecording(recording);
+			console.log("Recording started");
+		} catch (err) {
+			console.error("Failed to start recording", err);
+		}
+	}
+
+	async function stopRecording() {
+		console.log("Stopping recording..");
+		if (!recording) {
+			return;
+		}
+		setRecording(null);
+		await recording.stopAndUnloadAsync();
+		await Audio.setAudioModeAsync({
+			allowsRecordingIOS: false,
+		});
+		const uri = recording.getURI();
+		console.log("Recording stopped and stored at", uri);
+		if (!uri) {
+			return;
+		}
+		const { sound } = await Audio.Sound.createAsync({ uri });
+
+		setSound(sound);
+	}
+
+	const playPauseSound = async () => {
+		if(!sound) {
+			return
+		}
+		if(paused) {
+			setPaused(false)
+			await sound?.playAsync()
+		}else{
+			setPaused(true)
+			await sound?.pauseAsync()
+		}
+
+	}
+
 	return (
 		<KeyboardAvoidingView
 			style={[styles.root, { height: isemojiPickerOpen ? "50%" : "auto" }]}
@@ -169,16 +227,21 @@ export default function MessageInput({ chatRoom }) {
 						source={{ uri: image }}
 						style={{ width: 100, height: 100, borderRadius: 10 }}
 					/>
-					<View style={{flex:1, justifyContent:'flex-start', alignSelf:'flex-end'}}>
-					<View style={{
-						height: 3, 
-						backgroundColor: '#3777f0', 
-						width: `${progress * 100}%`, 
-						}}>
-
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "flex-start",
+							alignSelf: "flex-end",
+						}}
+					>
+						<View
+							style={{
+								height: 3,
+								backgroundColor: "#3777f0",
+								width: `${progress * 100}%`,
+							}}
+						></View>
 					</View>
-					</View>
-
 
 					<Pressable onPress={() => setImage(null)}>
 						<AntDesign
@@ -188,6 +251,21 @@ export default function MessageInput({ chatRoom }) {
 							style={{ margin: 5 }}
 						/>
 					</Pressable>
+				</View>
+			)}
+
+			{sound && (
+				<View style={styles.sendAudioContainer}>
+					<Pressable  onPress={playPauseSound}>
+						<Feather 
+						name={paused ? "play" : 'pause' }
+						size={24} 
+						color="grey" />
+					</Pressable>
+
+					<View style={styles.audioProgressBG}>
+						<View style={[styles.audioProgressFG, {left: `${audioProgress * 100}%`}]}/>
+					</View>
 				</View>
 			)}
 
@@ -212,19 +290,23 @@ export default function MessageInput({ chatRoom }) {
 						onChangeText={setMessage}
 						placeholder="Digite sua mensagem..."
 					/>
+
 					<Pressable onPress={pickImage}>
 						<Feather name="image" size={24} color="grey" style={styles.icon} />
 					</Pressable>
+
 					<Pressable onPress={takePhoto}>
 						<Feather name="camera" size={24} color="grey" style={styles.icon} />
 					</Pressable>
 
-					<MaterialCommunityIcons
-						name="microphone-outline"
-						size={24}
-						color="grey"
-						style={styles.icon}
-					/>
+					<Pressable onPressIn={startRecording} onPressOut={stopRecording}>
+						<MaterialCommunityIcons
+							name={recording ? "microphone" : "microphone-outline"}
+							size={24}
+							color={recording ? "red" : "#595959"}
+							style={styles.icon}
+						/>
+					</Pressable>
 				</View>
 				<Pressable onPress={onPress} style={styles.buttonContainer}>
 					{message || image ? (
@@ -287,10 +369,39 @@ const styles = StyleSheet.create({
 	sendImageContainer: {
 		flexDirection: "row",
 		marginVertical: 10,
-		alignSelf: "stretch",
 		justifyContent: "space-between",
+		alignSelf: "stretch",
 		borderWidth: 1,
 		borderColor: "lightgray",
 		borderRadius: 10,
 	},
+	sendAudioContainer: {
+		marginVertical: 10,
+		padding: 10,
+		flexDirection: 'row',
+		justifyContent: "space-between",
+		alignItems:'center',
+		alignSelf: "stretch",
+		borderWidth: 1,
+		borderColor: "lightgray",
+		borderRadius: 10,
+	},
+	audioProgressBG: {
+		height: 3,
+		flex:1,
+		backgroundColor: 'lightgrey',
+		borderRadius: 5,
+		margin: 10,
+
+	},
+	audioProgressFG: {
+		width: 10,
+		height: 10,
+		borderRadius: 10,
+		backgroundColor:'#3777f0',
+
+		position: 'absolute',
+		top: -3,
+
+	}
 });

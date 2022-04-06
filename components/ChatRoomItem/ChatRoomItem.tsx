@@ -5,6 +5,8 @@ import { DataStore } from "@aws-amplify/datastore";
 import { ChatRoomUser, User, Message } from "../../src/models";
 import { Auth } from "aws-amplify";
 import styles from './styles'
+import moment from "moment";
+import 'moment/locale/pt-br'
 
 
 export default function ({ chatRoom }) {
@@ -46,12 +48,16 @@ export default function ({ chatRoom }) {
 		return <ActivityIndicator/>
 	}
 
+	moment.locale('pt-br');
+	const time = moment(lastMessage?.createdAt).from(moment())
+
+
 	return (
 		<Pressable onPress={onPress} style={styles.container}>
 			<Image
 				style={styles.image}
 				source={{
-					uri: user.imageUri
+					uri: user?.imageUri
 				}}
 			/>
 
@@ -62,7 +68,7 @@ export default function ({ chatRoom }) {
 			<View style={styles.rightContainer}>
 				<View style={styles.row}>
 					<Text style={styles.name}>{user.name}</Text>
-					<Text style={styles.text}>{lastMessage?.createdAt}</Text>
+					<Text style={styles.text}>{time}</Text>
 				</View>
 				<Text numberOfLines={1} style={styles.text}>
 					{lastMessage?.content}

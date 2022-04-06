@@ -10,13 +10,17 @@ import { Auth, DataStore, Storage } from "aws-amplify";
 import { User } from "../../src/models";
 import { S3Image } from "aws-amplify-react-native";
 import AudioPlayer from "../AudioPlayer";
+import { Ionicons } from "@expo/vector-icons";
+import {Message as MessageModel} from '../../src/models'
+
 
 const blue = "#3872e9";
 const grey = "lightgrey";
 
-export default function Message({ message }) {
+export default function Message(props) {
+	const [message, setMessage] = useState<MessageModel>(props.message)
 	const [user, setUser] = useState<User | undefined>();
-	const [isMe, setIsMe] = useState<boolean>(false);
+	const [isMe, setIsMe] = useState<boolean | null>(null);
 	const [soundURI, setSoundURI] = useState<any>(null)
 
 	const { width } = useWindowDimensions();
@@ -24,6 +28,21 @@ export default function Message({ message }) {
 	useEffect(() => {
 		DataStore.query(User, message.userID).then(setUser);
 	}, []);
+
+	useEffect(() => {
+		const subscription = DataStore.observe(MessageModel, message.id).subscribe(msg => {
+		  if(msg.model === MessageModel && msg.opType === 'UPDATE'){
+			setMessage(message => ({...message, ...msg.element}))
+		  }
+		})
+	
+		return () => subscription.unsubscribe()
+	  }, [])
+
+	  useEffect(() => {
+		setAsRead()
+	}, [isMe, message]);
+	  
 
 	useEffect(() => {
 	  if(message.audio) {
@@ -44,7 +63,11 @@ export default function Message({ message }) {
 		checkIfMe();
 	}, [user]);
 
-
+	const setAsRead = async () => {
+		if( isMe === false && message.status !== 'READ') {
+		await	DataStore.save(MessageModel.copyOf(message, (updated) => {updated.status = 'READ'}))
+		}
+	}
 
 	if (!user) {
 		return <ActivityIndicator />;
@@ -62,7 +85,7 @@ export default function Message({ message }) {
 				<View style={{ marginBottom: message.content ? 10 : 0 }}>
 					<S3Image
 						imgKey={message.image}
-						style={{ width: width * 0.7, aspectRatio: 4 / 3 }}
+						style={{ width: width * 0.65, aspectRatio: 4 / 3 }}
 						resizeMode="contain"
 					/>
 				</View>
@@ -72,10 +95,19 @@ export default function Message({ message }) {
 
 
 			{!!message.content && (
-				<Text style={[{ color: isMe ? "black" : "white" }]}>
+				<Text style={[{ color: isMe ? "white"  : "black" }]}>
 					{message.content}
 				</Text>
 			)}
+
+
+			{isMe && !!message.status && message.status !== 'SENT' && (
+					<Ionicons 
+					name={message.status === 'DELIVERED' ? "checkmark" : "checkmark-done"} 
+					size={16} color='white' 
+					style={{marginHorizontal:5}}
+					/>
+				  )}
 		</View>
 	);
 }
@@ -86,17 +118,19 @@ const styles = StyleSheet.create({
 		margin: 10,
 		borderRadius: 10,
 		maxWidth: "75%",
+		flexDirection:'row',
+		alignItems:'flex-end'
 	},
 	text: {
 		color: "white",
 	},
 	leftContainer: {
-		backgroundColor: blue,
+		backgroundColor: grey, 
 		marginLeft: 10,
 		marginRight: "auto",
 	},
 	rightContainer: {
-		backgroundColor: grey,
+		backgroundColor: blue,
 		marginLeft: "auto",
 		marginRight: 10,
 	},

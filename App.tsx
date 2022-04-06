@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -6,8 +7,9 @@ import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import { withAuthenticator } from "aws-amplify-react-native";
 
-import AmplifyClass, {Auth} from "aws-amplify";
+import AmplifyClass, { Auth, DataStore, Hub } from "aws-amplify";
 import awsmobile from "./src/aws-exports";
+import { Message } from "./src/models";
 
 AmplifyClass.configure(awsmobile);
 
@@ -15,7 +17,27 @@ function App() {
 	const isLoadingComplete = useCachedResources();
 	const colorScheme = useColorScheme();
 
-	Auth.currentAuthenticatedUser()
+	Auth.currentAuthenticatedUser();
+
+	useEffect(() => {
+		// Create listener
+		const listener = Hub.listen("datastore", async (hubData) => {
+			const { event, data } = hubData.payload;
+			if (event === 'outboxMutationProcessed' 
+			&& data.model === Message 
+			&& !(['DELIVERED', 'READ'].includes(data.element.status ))) {
+					// set to delivered
+					DataStore.save(
+						Message.copyOf(data.element, (updated) => {
+							updated.status = "DELIVERED";
+						})
+					)
+			}
+		});
+
+		// Remove listener
+		return () => listener();
+	}, []);
 
 	if (!isLoadingComplete) {
 		return null;
@@ -28,5 +50,4 @@ function App() {
 	}
 }
 
-
-export default withAuthenticator(App)
+export default withAuthenticator(App);

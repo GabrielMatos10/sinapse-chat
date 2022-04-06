@@ -10,16 +10,6 @@ export default function UserItem ({user}) {
 	const navigation = useNavigation()
 
 	const onPress = async () => {
-
-		// TODO if there is already a chat room between these 2 users
-		// then redirect to the existing chat room
-		// otherwise, create a new chatroom with these users.
-
-		 
-
-
-
-
 		// Create a chat room
 		const newChatRoom = await DataStore.save(new ChatRoom({newMessages: 0}))
 

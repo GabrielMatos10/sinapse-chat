@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, FlatList, SafeAreaView, Pressable, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, FlatList, SafeAreaView, Pressable, ActivityIndicator, Image } from 'react-native'
 import { DataStore} from '@aws-amplify/datastore';
 import { ChatRoom, Message as MessageModel } from '../src/models';
 import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 import {SortDirection} from 'aws-amplify'
 
-export default function ChatRoomScreen() {
+export default function ChatRoomScreen({user}) {
   const [messages, setMessages] = useState<MessageModel[]>([])
   const [chatRoom, setChatRoom] = useState<ChatRoom|null>(null)
 
@@ -74,6 +74,7 @@ export default function ChatRoomScreen() {
         inverted
       />
       <MessageInput chatRoom={chatRoom}/>
+  
     </SafeAreaView>
   ) 
 }

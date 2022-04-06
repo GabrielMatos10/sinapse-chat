@@ -5,7 +5,7 @@ import { DataStore, Auth } from 'aws-amplify';
 import { User, ChatRoomUser } from '../src/models';
 
 
-const ChatRoomHeader = (id, children) => {
+const ChatRoomHeader = ({id, children}) => {
     const {width} = useWindowDimensions()
 
     const [user, setUser] = useState<User|null>(null)

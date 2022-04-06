@@ -64,6 +64,7 @@ export default function MessageInput({ chatRoom }) {
 				content: message,
 				userID: user.attributes.sub,
 				chatroomID: chatRoom.id,
+				status: 'SENT'
 			})
 		);
 

@@ -3,6 +3,7 @@ import {View, Image, Text, useWindowDimensions} from 'react-native'
 import { Feather } from '@expo/vector-icons';
 import { DataStore, Auth } from 'aws-amplify';
 import { User, ChatRoomUser } from '../src/models';
+import moment from 'moment';
 
 
 const ChatRoomHeader = ({id, children}) => {
@@ -25,6 +26,18 @@ const ChatRoomHeader = ({id, children}) => {
         }
         fetchUsers()
       }, [])
+
+      const getLastOnlineText = () => {
+        if(!user?.LastOnlineAt){
+          return null;
+        }
+        const lastOnlineDiffMS =  moment().diff(moment(user.LastOnlineAt))
+        if( lastOnlineDiffMS < 5 * 60 * 1000) {
+          return "online"
+        } else {
+          return `Última vez online ${moment(user.LastOnlineAt).fromNow()}`
+        }
+      }
   
     return(
       <View style={{
@@ -39,9 +52,25 @@ const ChatRoomHeader = ({id, children}) => {
         source={{uri: user?.imageUri, }}
         style={{width: 30, height: 30, borderRadius: 30,}}
         />
-        <Text style={{flex: 1, marginLeft:5, fontSize: 18, fontWeight: 'bold'}}> {user?.name} </Text>
-        <Feather name="camera" size={24} color="grey" style={{ marginHorizontal: 10}} />
-        <Feather name="edit" size={24} color="grey" style={{ marginHorizontal: 10}} />
+        <View style={{flex: 1, marginLeft: 10}}>
+          <Text style={{flex: 1, marginLeft:5, fontSize: 18, fontWeight: 'bold'}}> 
+          {user?.name} 
+          </Text>
+          <Text>{getLastOnlineText()}</Text>
+        </View>
+
+        <Feather 
+        name="camera" 
+        size={24} 
+        color="grey" 
+        style={{ marginHorizontal: 10}} 
+        />
+        <Feather 
+        name="edit" 
+        size={24} 
+        color="grey" 
+        style={{ marginHorizontal: 10}} 
+        />
       </View>
     )
   }

@@ -7,8 +7,10 @@ import Message from '../components/Message'
 import MessageInput from '../components/MessageInput'
 import {SortDirection} from 'aws-amplify'
 
-export default function ChatRoomScreen({user}) {
+export default function ChatRoomScreen() {
+  
   const [messages, setMessages] = useState<MessageModel[]>([])
+  const [ messageReplyTo, setMessageReplyTo] = useState<MessageModel|null>(null)
   const [chatRoom, setChatRoom] = useState<ChatRoom|null>(null)
 
   const route = useRoute()
@@ -70,10 +72,10 @@ export default function ChatRoomScreen({user}) {
     <SafeAreaView style={styles.page}>
       <FlatList 
         data={messages}
-        renderItem={({item}) => <Message message={item}/>}
+        renderItem={({item}) => <Message message={item} setAsMessageReply={() => setMessageReplyTo(item)} />}
         inverted
       />
-      <MessageInput chatRoom={chatRoom}/>
+      <MessageInput chatRoom={chatRoom} messageReplyTo={messageReplyTo}  removeMessageReplyTo={() => setMessageReplyTo(null)}/>
   
     </SafeAreaView>
   ) 

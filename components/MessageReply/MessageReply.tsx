@@ -13,17 +13,15 @@ import { S3Image } from "aws-amplify-react-native";
 import AudioPlayer from "../AudioPlayer";
 import { Ionicons } from "@expo/vector-icons";
 import {Message as MessageModel} from '../../src/models'
-import MessageReply from "../MessageReply";
 
 
 const blue = "#3872e9";
 const grey = "lightgrey";
 
-export default function Message(props) {
-	const {setAsMessageReply, message: propMessage} = props;
+export default function MessageReply(props) {
+	const { message: propMessage} = props;
 
 	const [message, setMessage] = useState<MessageModel>(propMessage)
-	const [repliedTo, setRepliedTo] = useState<MessageModel|undefined>(undefined)
 	const [user, setUser] = useState<User | undefined>();
 	const [isMe, setIsMe] = useState<boolean | null>(null);
 	const [soundURI, setSoundURI] = useState<any>(null)
@@ -38,32 +36,7 @@ export default function Message(props) {
 	  setMessage(propMessage)
 	}, [propMessage])
 
-	useEffect(() => {
-	  if(message?.replyToMessageID){
-		DataStore.query(MessageModel, message.replyToMessageID).then(setRepliedTo);
-
-	  }
-	}, [message])
-
-
-
-	
-
-	useEffect(() => {
-		const subscription = DataStore.observe(MessageModel, message.id).subscribe(msg => {
-		  if(msg.model === MessageModel && msg.opType === 'UPDATE'){
-			setMessage(message => ({...message, ...msg.element}))
-		  }
-		})
-	
-		return () => subscription.unsubscribe()
-	  }, [])
-
-	  useEffect(() => {
-		setAsRead()
-	}, [isMe, message]);
 	  
-
 	useEffect(() => {
 	  if(message.audio) {
 		  Storage.get(message.audio).then(setSoundURI)
@@ -83,27 +56,17 @@ export default function Message(props) {
 		checkIfMe();
 	}, [user]);
 
-	const setAsRead = async () => {
-		if( isMe === false && message.status !== 'READ') {
-		await	DataStore.save(MessageModel.copyOf(message, (updated) => {updated.status = 'READ'}))
-		}
-	}
 
-	if (!user) {
-		return <ActivityIndicator />;
-	}
 
 	return (
-		<Pressable
-			onLongPress={setAsMessageReply}
+		<View
+			
 			style={[
 				styles.container,
 				isMe ? styles.rightContainer : styles.leftContainer,
 				{width: soundURI ? '75%' : 'auto'}
 			]}
 		>
-			
-			{repliedTo && (<MessageReply message={repliedTo} />)}
 			
 			<View style={styles.row}>
 			{message.image && (
@@ -134,7 +97,7 @@ export default function Message(props) {
 					/>
 				  )}
 			</View>
-		</Pressable>
+		</View>
 	);
 }
 

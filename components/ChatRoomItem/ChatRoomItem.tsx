@@ -57,7 +57,7 @@ export default function ({ chatRoom }) {
 			<Image
 				style={styles.image}
 				source={{
-					uri: user?.imageUri
+					uri: chatRoom.imageUri || user?.imageUri
 				}}
 			/>
 
@@ -67,7 +67,7 @@ export default function ({ chatRoom }) {
 
 			<View style={styles.rightContainer}>
 				<View style={styles.row}>
-					<Text style={styles.name}>{user.name}</Text>
+					<Text style={styles.name}>{chatRoom.name || user.name}</Text>
 					<Text style={styles.text}>{time}</Text>
 				</View>
 				<Text numberOfLines={1} style={styles.text}>

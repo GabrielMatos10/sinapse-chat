@@ -42,6 +42,7 @@ import {
 	RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
+import GroupInfoScreen from "../screens/GroupInfoScreen";
 
 export default function Navigation({
 	colorScheme,
@@ -72,10 +73,14 @@ function RootNavigator() {
 			<Stack.Screen
 				name="ChatRoom"
 				component={ChatRoomScreen}
-				options={({route}) => ({
+				options={({ route }) => ({
 					headerTitle: () => <ChatRoomHeader id={route.params?.id} />,
 					headerBackTitleVisible: false,
 				})}
+			/>
+			<Stack.Screen
+				name="ChatInfo"
+				component={GroupInfoScreen}
 			/>
 			<Stack.Screen
 				name="UsersScreen"

@@ -4,10 +4,16 @@ import { Text, View, Image, Pressable } from "react-native";
 import styles from './styles'
 
 
-export default function UserItem ({user, onPress, isSelected }) {
+export default function UserItem ({
+	user, 
+	onPress, 
+	onLongPress, 
+	isSelected, 
+	isAdmin = false 
+}) {
 
 	return (
-		<Pressable onPress={onPress} style={styles.container}>
+		<Pressable onPress={onPress} onLongPress={onLongPress} style={styles.container}>
 			<Image
 				style={styles.image}
 				source={{
@@ -15,9 +21,8 @@ export default function UserItem ({user, onPress, isSelected }) {
 				}}
 			/>
 			<View style={styles.rightContainer}>
-				<View style={styles.row}>
 					<Text style={styles.name}>{user.name}</Text>
-				</View>
+					{isAdmin && <Text>Admin</Text>}
 			</View>
 			{isSelected !== undefined && (<Feather 
 			name={isSelected ? 'check-circle' : 'circle'}

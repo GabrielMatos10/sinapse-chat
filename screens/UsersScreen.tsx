@@ -58,7 +58,7 @@ export default function UsersScreen() {
 
 		const newChatRoomData = {
 			newMessages: 0,
-			admin: User,
+			Admin: dbUser,
 		};
 
 		if (users.length > 1) {

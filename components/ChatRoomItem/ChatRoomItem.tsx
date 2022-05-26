@@ -70,6 +70,7 @@ export default function ({ chatRoom }) {
 					<Text style={styles.name}>{chatRoom.name || user.name}</Text>
 					<Text style={styles.text}>{time}</Text>
 				</View>
+				o qu
 				<Text numberOfLines={1} style={styles.text}>
 					{lastMessage?.content}
 				</Text>

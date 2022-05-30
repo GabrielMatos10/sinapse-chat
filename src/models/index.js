@@ -15,5 +15,5 @@ export {
   ChatRoom,
   User,
   ChatRoomUser,
-  MessageStatus
+  MessageStatus,
 };

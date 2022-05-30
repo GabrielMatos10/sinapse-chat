@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-	Text,
 	View,
-	Image,
 	StyleSheet,
 	FlatList,
-	Pressable,
 } from "react-native";
 import { Auth, DataStore } from "aws-amplify";
 import { ChatRoom, ChatRoomUser } from "../src/models";

@@ -6,10 +6,10 @@ import styles from './styles'
 
 export default function UserItem ({
 	user, 
-	onPress, 
-	onLongPress, 
-	isSelected, 
-	isAdmin = false 
+	onPress,
+	onLongPress,
+	isSelected,
+	isAdmin= false
 }) {
 
 	return (

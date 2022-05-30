@@ -13,7 +13,7 @@ export default function ({ chatRoom }) {
 	// const [users, setUsers] = useState<User[]>([]) // all users in this chatroom
 	const [user, setUser] = useState<User|null>(null) // display user
 	const [lastMessage, setLastMessage] = useState<Message|undefined>() // show lastMessage
-
+	const [isLoading, setisLoading] = useState(true)
 
 	const navigation = useNavigation()
 
@@ -26,6 +26,8 @@ export default function ({ chatRoom }) {
 
 		const authUser = await Auth.currentAuthenticatedUser()
 		setUser(fetchedUsers.find(user => user.id !== authUser.attributes.sub) || null)
+
+		setisLoading(false)
 	  }
 	  fetchUsers()
 	}, [])
@@ -44,7 +46,7 @@ export default function ({ chatRoom }) {
 		navigation.navigate('ChatRoom', {id: chatRoom.id})
 	}
 
-	if (!user) {
+	if (!isLoading) {
 		return <ActivityIndicator/>
 	}
 
@@ -67,10 +69,9 @@ export default function ({ chatRoom }) {
 
 			<View style={styles.rightContainer}>
 				<View style={styles.row}>
-					<Text style={styles.name}>{chatRoom.name || user.name}</Text>
+					<Text style={styles.name}>{chatRoom.name || user?.name}</Text>
 					<Text style={styles.text}>{time}</Text>
 				</View>
-				o qu
 				<Text numberOfLines={1} style={styles.text}>
 					{lastMessage?.content}
 				</Text>

@@ -80,7 +80,7 @@ const ChatRoomHeader = ({ id, children }) => {
 			}}
 		>
 			<Image
-				source={{ uri: chatRoom?.imageUri || user?.imageUri }}
+				source={{uri: chatRoom?.imageUri || user?.imageUri}}
 				style={{ width: 30, height: 30, borderRadius: 30 }}
 			/>
 			<Pressable onPress={openInfo} style={{ flex: 1, marginLeft: 10 }}>
@@ -90,7 +90,7 @@ const ChatRoomHeader = ({ id, children }) => {
 					{chatRoom?.name || user?.name}
 				</Text>
 				<Text numberOfLines={1}>{isGroup ? getUserNames() : getLastOnlineText()}</Text>
-			</Pressa>
+			</Pressable>
 
 			<Feather
 				name="camera"

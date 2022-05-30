@@ -8,12 +8,11 @@ import {
 	SafeAreaView,
 } from "react-native";
 import UserItem from "../components/UsersItem/UserItem";
-import { DataStore } from "@aws-amplify/datastore";
 import { ChatRoom, ChatRoomUser, User } from "../src/models";
+import { Auth, DataStore } from "aws-amplify";
 
 import NewGroupButton from "../components/NewGroupButton/NewGroupButton";
 import { useNavigation } from "@react-navigation/native";
-import { Auth } from "aws-amplify";
 
 export default function UsersScreen() {
 	const [users, setUsers] = useState<User[]>([]);
@@ -104,8 +103,7 @@ export default function UsersScreen() {
 					<UserItem
 						user={item}
 						onPress={() => onUserPress(item)}
-						isSelected={isNewGroup ? isUserSelected(item) : undefined}
-					/>
+						isSelected={isNewGroup ? isUserSelected(item) : undefined} onLongPress={undefined}	/>
 				)}
 				showsVerticalScrollIndicator={false}
 				ListHeaderComponent={() => (

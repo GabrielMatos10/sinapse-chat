@@ -79,7 +79,7 @@ function RootNavigator() {
 				})}
 			/>
 			<Stack.Screen
-				name="ChatInfo"
+				name="GroupInfoScreen"
 				component={GroupInfoScreen}
 			/>
 			<Stack.Screen

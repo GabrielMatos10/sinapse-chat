@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { DataStore, Auth } from "aws-amplify";
 import { ChatRoom, ChatRoomUser, User } from "../../src/models";
 import { useRoute } from "@react-navigation/native";
+import UserItem from "../../components/UsersItem";
 
 const GroupInfoScreen = () => {
 	const [chatRoom, setChatRoom] = useState<ChatRoom | null>(null);
@@ -84,9 +85,9 @@ const GroupInfoScreen = () => {
 			<FlatList
 				data={allUsers}
 				renderItem={({ item }) => (
-					<UserItem user={item} isAdmin={chatRoom?.Admin?.id === item.id} />
+					<UserItem user={item} isAdmin={chatRoom?.Admin?.id === item.id} onLongPress={() => confirmDelete(item)}/>
 				)}
-				onLongPress={() => confirmDelete(item)}
+				
 			/>
 		</View>
 	);
@@ -105,3 +106,7 @@ const styles = StyleSheet.create({
 });
 
 export default GroupInfoScreen;
+function item(item: any) {
+	throw new Error("Function not implemented.");
+}
+
